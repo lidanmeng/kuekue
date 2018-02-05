@@ -3,10 +3,15 @@ package com.kuekue.interview;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TreeMap;
 
 public class Solution {
     /*
@@ -278,21 +283,119 @@ public class Solution {
         return newHead;
     }
 
-    public static void main(String[] args) {
-        ListNode head = new ListNode(44);
-        head.next = new ListNode(45);
-        head.next.next = new ListNode(47);
+    public static int majorityNumber(List<Integer> nums) {
 
-        ListNode newHead = reverse(head);
-
-        ListNode next = newHead;
-        for (;;) {
-            if (null != next) {
-                System.out.println(next.val);
-                next = next.next;
-                continue;
-            }
-            break;
+        TreeMap<Integer, Integer> map = new TreeMap<Integer, Integer>();
+        for (Integer integer : nums) {
+            map.put(integer, map.get(integer) == null ? 1 : map.get(integer) + 1);
         }
+
+        List<Map.Entry<Integer, Integer>> list =
+                new ArrayList<Map.Entry<Integer, Integer>>(map.entrySet());
+
+        Collections.sort(list, new Comparator<Map.Entry<Integer, Integer>>() {
+
+            @Override
+            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+                return o1.getValue().compareTo(o2.getValue());
+            }
+        });
+
+        return list.get(list.size() - 1).getKey();
+    }
+
+    public static int majorityNumber2(List<Integer> nums) {
+
+        Map<Integer, Integer> map = new HashMap<Integer, Integer>();
+        for (Integer integer : nums) {
+            map.put(integer, map.get(integer) == null ? 1 : map.get(integer) + 1);
+        }
+
+        int half = nums.size() / 2;
+        for (Integer key : map.keySet()) {
+            if (map.get(key) > half) {
+                return key;
+            }
+        }
+        return 0;
+    }
+
+    /**
+     * @param lists: a list of ListNode
+     * @return: The head of one sorted list.
+     */
+    public ListNode mergeKLists(List<ListNode> lists) {
+        // write your code here
+
+        ListNode newHead = null;
+
+        ListNode node = null;
+        ListNode prev = null;
+
+        int nil = 0;
+        while (true) {
+
+            nil = 0;
+
+            Integer min = null, minIndex = null;
+            ListNode minHead = null;
+            for (int i = 0; i < lists.size(); i++) {
+
+                ListNode current = lists.get(i);
+                if (current == null) {
+                    nil++;
+                    continue;
+                }
+                if (min == null || current.val < min) {
+
+                    min = current.val;
+                    minIndex = i;
+                    minHead = current;
+                }
+            }
+
+            if (nil == lists.size()) {
+                break;
+            }
+
+            if (newHead == null) {
+                newHead = minHead;
+            } else {
+                if (node == null) {
+                    node = newHead;
+                    prev = newHead;
+                    continue;
+                }
+
+                node = minHead;
+                prev.next = node;
+                prev = node;
+            }
+
+
+
+            lists.set(minIndex, lists.get(minIndex).next);
+        }
+
+
+
+        return newHead;
+    }
+
+    /**
+     * 骰子
+     * @param n an integer
+     * @return a list of Map.Entry<sum, probability>
+     */
+    public List<Map.Entry<Integer, Double>> dicesSum(int n) {
+        // Write your code here
+        // Ps. new AbstractMap.SimpleEntry<Integer, Double>(sum, pro)
+        // to create the pair
+        return null;
+
+    }
+
+    public static void main(String[] args) {
+
     }
 };
